@@ -42,20 +42,23 @@ def update(frame):
     # Plot percolation_ranges
     gdf['ET'] = percolation_values
     gdf.plot(column='ET', cmap='Blues', linewidth=0.8, ax=ax1, edgecolor='black', legend=False)
-    ax1.set_title(f'Percolation for {month}')
+    ax1.set_title(f'Percolation')
     ax1.set_axis_off()
 
     # Plot surface_runoff_ranges
     gdf['ET'] = surface_runoff_values
     gdf.plot(column='ET', cmap='Greens', linewidth=0.8, ax=ax2, edgecolor='black', legend=False)
-    ax2.set_title(f'Surface Runoff for {month}')
+    ax2.set_title(f'Surface Runoff')
     ax2.set_axis_off()
 
-    # Plot third_ranges
+    # Plot et ranges
     gdf['ET'] = third_values
     gdf.plot(column='ET', cmap='Oranges', linewidth=0.8, ax=ax3, edgecolor='black', legend=False)
-    ax3.set_title(f'Third Metric for {month}')
+    ax3.set_title(f'Evapotranspiration')
     ax3.set_axis_off()
+
+    # Update the main title with the current month
+    fig.suptitle(f'{month}', fontsize=20)
 
 
 # Create animation
