@@ -9,11 +9,9 @@ plot_type = 'et'
 
 
 # Calculate global min and max for the color scale
-def get_global_min_max(et_ranges):
-    if not et_ranges:
-        return 0, 1  # Avoid errors with empty data
+def get_global_min_max(et_ranges_values):
 
-    all_et = np.concatenate([list(month.values()) for month in et_ranges.values()])
+    all_et = np.concatenate([list(month.values()) for month in et_ranges_values.values()])
 
     # Calculate the global min and max values
     global_min = all_et.min()
