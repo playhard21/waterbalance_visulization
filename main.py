@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import numpy as np
 from matplotlib.ticker import FuncFormatter
-from src.evapotraspiration import load_et_values, plot_et
+from src.evapotraspiration import load_et_values, plot_et, get_colormap
 
 # Set the plot type (et or percolation_and_surface)
 plot_type = 'et'
@@ -10,7 +10,6 @@ plot_type = 'et'
 
 # Calculate global min and max for the color scale
 def get_global_min_max(et_ranges_values):
-
     all_et = np.concatenate([list(month.values()) for month in et_ranges_values.values()])
 
     # Calculate the global min and max values
@@ -45,14 +44,15 @@ if plot_type == 'et':
     cbar_ax = fig.add_axes([0.88, 0.25, 0.01, 0.4])  # Adjust height and place the colorbar as close as possible
 
     # Create the colorbar
-    sm = plt.cm.ScalarMappable(cmap='Oranges' if plot_type == 'et' else 'Blues', norm=norm)
+    color_of_graph = get_colormap()
+    sm = plt.cm.ScalarMappable(cmap=color_of_graph, norm=norm)
     sm.set_array([])  # Required for colorbar
     cbar = fig.colorbar(sm, cax=cbar_ax)
 
 
     # Add the unit "MM" to each tick label
     def add_mm_to_ticks(x, _):
-        return f'{int(x)} MM'  # Converts tick values to strings with 'MM' appended
+        return f'{int(x)}mm'  # Converts tick values to strings with 'MM' appended
 
 
     # Set tick labels with "MM" after each value
@@ -63,12 +63,12 @@ plt.subplots_adjust(wspace=0.01)  # Very small padding between the plot and the 
 
 # Create animation
 ani = animation.FuncAnimation(fig, update,
-                              frames=len(percolation_ranges if plot_type == 'percolation_and_surface' else et_ranges),
+                              frames=len(et_ranges),
                               interval=1000,  # 1000ms = 1 second per frame
                               repeat=False)
 
 # Save the animation using Pillow
-ani.save(f'{plot_type}_animation_with_scale.gif', writer='pillow')
+ani.save(f'surface_runoff.gif', writer='pillow')
 
 # Show the plot
 plt.show()
