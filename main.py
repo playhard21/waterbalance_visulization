@@ -20,7 +20,6 @@ with open('data/et_vis_data.json', 'r') as f:
 # Create a figure and axes for the animation
 fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(30, 10))
 
-
 def update(frame):
     # Get month name
     month = list(percolation_ranges.keys())[frame]
@@ -32,7 +31,7 @@ def update(frame):
     surface_runoff_values = [surface_runoff_ranges[month][str(i + 1)] for i in range(len(gdf))]
 
     # Get ET values for third_ranges
-    third_values = [et_ranges[month][str(i + 1)] for i in range(len(gdf))]
+    et_values = [et_ranges[month][str(i + 1)] for i in range(len(gdf))]
 
     # Clear previous plots
     ax1.clear()
@@ -52,7 +51,7 @@ def update(frame):
     ax2.set_axis_off()
 
     # Plot et ranges
-    gdf['ET'] = third_values
+    gdf['ET'] = et_values
     gdf.plot(column='ET', cmap='Oranges', linewidth=0.8, ax=ax3, edgecolor='black', legend=False)
     ax3.set_title(f'Evapotranspiration')
     ax3.set_axis_off()
