@@ -11,7 +11,7 @@ def load_et_values():
     with open('data/et_vis_data.json', 'r') as f:
         et_ranges = json.load(f)
 
-    return et_ranges
+    return et_ranges,gdf
 
 
 def plot_et(frame, ax3, gdf, et_ranges):
