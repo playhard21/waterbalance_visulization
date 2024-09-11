@@ -68,7 +68,7 @@ ani = animation.FuncAnimation(fig, update,
                               repeat=False)
 
 # Save the animation using Pillow
-ani.save(f'surface_runoff.gif', writer='pillow')
+ani.save(f'percolation.gif', writer='pillow')
 
 # Show the plot
 plt.show()
