@@ -1,13 +1,10 @@
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from matplotlib.ticker import FuncFormatter
-from src.evapotraspiration import load_et_values, plot_et, get_colormap, get_global_min_max
 import geopandas as gpd
 import json
-import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 import numpy as np
-
 
 gdf = gpd.read_file('data/Sub_basins.geojson')
 
@@ -16,7 +13,6 @@ def load_et_values():
     # Load ET ranges
     with open('data/percolation_data.json', 'r') as f:
         et_ranges = json.load(f)
-
     return et_ranges, gdf
 
 
@@ -28,7 +24,7 @@ def get_colormap():
     return color_of_graph
 
 
-def plot_et(frame, ax3, gdf, et_ranges):
+def plot_et(frame, ax3, gdf, et_ranges, norm):
     month = list(et_ranges.keys())[frame]
 
     # Get ET values
@@ -37,10 +33,9 @@ def plot_et(frame, ax3, gdf, et_ranges):
     # Plot ET values
     ax3.clear()
     gdf['ET'] = et_values
-    # brown_cmap = create_brown_colormap()
     color_of_graph = get_colormap()
-    gdf.plot(column='ET', cmap=color_of_graph, linewidth=0.8, ax=ax3, edgecolor='black', legend=False)
-    ax3.set_title(f'Precolation')
+    gdf.plot(column='ET', cmap=color_of_graph, linewidth=0.8, ax=ax3, edgecolor='black', legend=False, norm=norm)
+    ax3.set_title(f'Percolation')
     ax3.set_axis_off()
 
     return month
@@ -49,12 +44,10 @@ def plot_et(frame, ax3, gdf, et_ranges):
 # Calculate global min and max for the color scale
 def get_global_min_max(et_ranges_values):
     all_et = np.concatenate([list(month.values()) for month in et_ranges_values.values()])
-
-    # Calculate the global min and max values
     global_min = all_et.min()
     global_max = all_et.max()
-
     return global_min, global_max
+
 
 # Load data for evapotranspiration
 et_ranges, gdf = load_et_values()
@@ -65,18 +58,17 @@ global_min, global_max = get_global_min_max(et_ranges)
 # Create a figure with one subplot for evapotranspiration
 fig, ax3 = plt.subplots(1, 1, figsize=(12, 8))  # Reduced figure height
 
-
-def update(frame):
-    # Plot ET values
-    month = plot_et(frame, ax3, gdf, et_ranges)
-    fig.suptitle(f'{month}', fontsize=20)
-
-
 # Set the color limits for consistency across frames
 norm = plt.Normalize(vmin=global_min, vmax=global_max)
 
+
+def update(frame):
+    # Plot ET values
+    month = plot_et(frame, ax3, gdf, et_ranges, norm)
+    fig.suptitle(f'{month}', fontsize=20)
+
+
 # Create the colorbar with a custom size
-# The arguments are [left, bottom, width, height]
 cbar_ax = fig.add_axes([0.88, 0.25, 0.01, 0.4])  # Adjust height and place the colorbar as close as possible
 
 # Create the colorbar
@@ -95,7 +87,7 @@ def add_mm_to_ticks(x, _):
 cbar.ax.yaxis.set_major_formatter(FuncFormatter(add_mm_to_ticks))
 
 # Minimize padding between the plot and colorbar
-plt.subplots_adjust(wspace=0.01)  # Very small padding between the plot and the colorbar
+plt.subplots_adjust(wspace=-2)  # Very small padding between the plot and the colorbar
 
 # Create animation
 ani = animation.FuncAnimation(fig, update,
