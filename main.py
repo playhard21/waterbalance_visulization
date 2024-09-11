@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import numpy as np
+from matplotlib.ticker import FuncFormatter
 from src.percolation_and_surface_runoff import load_percolation_surface, plot_percolation_surface
 from src.evapotraspiration import load_et_values, plot_et
 
@@ -64,14 +65,22 @@ elif plot_type == 'et':
     # Create the colorbar
     sm = plt.cm.ScalarMappable(cmap='Oranges' if plot_type == 'et' else 'Blues', norm=norm)
     sm.set_array([])  # Required for colorbar
-    fig.colorbar(sm, cax=cbar_ax)
+    cbar = fig.colorbar(sm, cax=cbar_ax)
+
+    # Add the unit "MM" to each tick label
+    def add_mm_to_ticks(x, _):
+        return f'{int(x)} MM'  # Converts tick values to strings with 'MM' appended
+
+    # Set tick labels with "MM" after each value
+    cbar.ax.yaxis.set_major_formatter(FuncFormatter(add_mm_to_ticks))
 
 # Minimize padding between the plot and colorbar
-plt.subplots_adjust(wspace=0.00)  # Very small padding between the plot and the colorbar
+plt.subplots_adjust(wspace=0.01)  # Very small padding between the plot and the colorbar
 
 # Create animation
 ani = animation.FuncAnimation(fig, update,
                               frames=len(percolation_ranges if plot_type == 'percolation_and_surface' else et_ranges),
+                              interval=1000,  # 1000ms = 1 second per frame
                               repeat=False)
 
 # Save the animation using Pillow
